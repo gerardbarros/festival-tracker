@@ -1,5 +1,8 @@
 const cloudinary = require("../middleware/cloudinary");
 const Post = require("../models/Post");
+const mbxGeocoding = require("@mapbox/mapbox-sdk/services/geocoding");
+const mapBoxToken = process.env.MAPBOX_TOKEN;
+const geoCoder = mbxGeocoding( {accessToken: mapBoxToken} );
 
 
 module.exports = {
@@ -32,9 +35,18 @@ module.exports = {
       // Upload image to cloudinary
       const result = await cloudinary.uploader.upload(req.file.path);
 
+      // Get goecode from mapbox
+      const geoData = await geoCoder.forwardGeocode({
+        query: req.body.location,
+        limit: 1
+      }).send()
+      
+      
+
       await Post.create({
         title: req.body.title,
         location: req.body.location,
+        geometry: geoData.body.features[0].geometry,
         image: result.secure_url,
         cloudinaryId: result.public_id,
         caption: req.body.caption,
@@ -43,6 +55,7 @@ module.exports = {
         userName: req.user.userName,
       });
       console.log("Post has been added!");
+      console.log(geoData.body.features[0].geometry);
       res.redirect("/profile");
     } catch (err) {
       console.log(err);
