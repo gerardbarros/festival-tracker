@@ -1,7 +1,7 @@
 # Electric Glow
 Upload images from your festival or concert experience and share your favorite memories from each event with other users.
 
-https://electricglow.up.railway.app/
+https://electricglow.cyclic.app/
 
 
 
