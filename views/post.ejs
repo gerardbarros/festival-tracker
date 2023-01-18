@@ -1,24 +1,30 @@
 <%- include('partials/header') -%>
+
+
 <div class="container">
   <div class="row justify-content-center mt-5">
     <div class="col-6">
       <h2><%= post.title %></h2>
       <img class="img-fluid rounded" src="<%= post.image%>" />
       <div class="row justify-content-between">
+        
         <!-- mapbox map -->
-        <div id='map' style='width: 400px; height: 300px;'></div>
+        <section>
+          <div id='map' style='width: 400px; height: 300px;'></div>
+        </section>
 
         <section>
           <strong>Location and Year</strong>
           <p><%= post.location %></p>
         </section>
         
+        
+
         <section>
           <strong>Favorite Memory</strong> 
           <p><%= post.caption %></p>
         </section>
 
-        
         
         
 
@@ -43,14 +49,22 @@
   </div>
 </div>
 
+
+<!-- script for mapbox -->
 <script>
-  mapboxgl.accessToken = "<%-process.env.MAPBOX_TOKEN -%>";
-  const map = new mapboxgl.Map({
+mapboxgl.accessToken = '<%- process.env.MAPBOX_TOKEN -%>';
+const postCoordinates = <%- JSON.stringify(post.geometry.coordinates) -%>;
+
+const map = new mapboxgl.Map({
     container: 'map', // container ID
     style: 'mapbox://styles/mapbox/streets-v12', // style URL
-    center: [-74.5, 40], // starting position [lng, lat]
-    zoom: 9, // starting zoom
+    center: postCoordinates, // starting position [lng, lat]
+    zoom: 13, // starting zoom
     });
-  </script>
+
+new mapboxgl.Marker()
+  .setLngLat(postCoordinates)
+  .addTo(map)
+</script>
 
 <%- include('partials/footer') -%>
